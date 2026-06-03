@@ -46,3 +46,17 @@ jobs:
         run: |
           echo "===== Pipeline valide avec succes ! ====="
           echo "Pret pour le deploiement avec Docker Compose"
+
+      - name: 7. Connexion a Docker Hub
+        uses: docker/login-action@v3
+        with:
+          # On utilise des variables secrete GitHub Actions pour ne pas exposer tes identifiants
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: 8. Taguer et Pousser l'image Backend (v1.0 et latest)
+        run: |
+          docker tag proshop-backend:latest ${{ secrets.DOCKERHUB_USERNAME }}/proshop-backend:latest
+          docker tag proshop-backend:latest ${{ secrets.DOCKERHUB_USERNAME }}/proshop-backend:v1.0
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/proshop-backend:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/proshop-backend:v1.0
