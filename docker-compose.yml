@@ -1,6 +1,37 @@
 version: '3.8'
 
 services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: proshop-prometheus
+    restart: always
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - '9090:9090'
+    networks:
+      - proshop-network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: proshop-grafana
+    restart: always
+    ports:
+      - '3001:3000' 
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    networks:
+      - proshop-network
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: proshop-node-exporter
+    restart: always
+    ports:
+      - '9100:9100'
+    networks:
+      - proshop-network
+
   mongo:
     image: mongo:4.4
     container_name: proshop-mongo
@@ -47,3 +78,6 @@ services:
 networks:
   proshop-network:
     driver: bridge
+
+volumes:
+  grafana-storage:

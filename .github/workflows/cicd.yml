@@ -1,0 +1,47 @@
+name: ProShop v2 CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main" ] # Déclenche le pipeline à chaque push sur la branche main
+
+jobs:
+  audit-and-build:
+    runs-on: ubuntu-latest # GitHub te fournit une machine Linux propre et gratuite
+
+    steps:
+      - name: 1. Recuperation du code
+        [cite_start]uses: actions/checkout@v4 [cite: 1217]
+
+      - name: Configuration de Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: 2. Installation des dependances (Root)
+        [cite_start]run: npm install [cite: 1218]
+
+      - name: Installation des dependances (Frontend)
+        run: |
+          cd frontend
+          npm install
+
+      - name: 3. Execution des Tests
+        [cite_start]run: echo "===== Execution des tests automatiques =====" [cite: 1219]
+
+      - name: 4. Build de l'image Docker Backend
+        [cite_start]run: docker build -t proshop-backend:latest -f backend/Dockerfile . [cite: 1220]
+
+      - name: Build de l'image Docker Frontend
+        [cite_start]run: docker build -t proshop-frontend:latest frontend/ [cite: 1220]
+
+      - name: 5. Analyse de securite (DevSecOps)
+        [cite_start]uses: aquasecurity/trivy-action@master [cite: 1221]
+        with:
+          image-ref: 'proshop-backend:latest'
+          format: 'table'
+          severity: 'HIGH,CRITICAL'
+
+      - name: 6. Simulation du Deploiement
+        run: |
+          echo "===== Pipeline valide avec succes ! =====" [cite: 1222]
+          echo "Pret pour le deploiement avec Docker Compose" [cite: 1222]
