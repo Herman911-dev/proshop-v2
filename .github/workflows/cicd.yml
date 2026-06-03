@@ -2,15 +2,16 @@ name: ProShop v2 CI/CD Pipeline
 
 on:
   push:
-    branches: [ "main" ] # Déclenche le pipeline à chaque push sur la branche main
+    branches:
+      - main
 
 jobs:
   audit-and-build:
-    runs-on: ubuntu-latest # GitHub te fournit une machine Linux propre et gratuite
+    runs-on: ubuntu-latest
 
     steps:
       - name: 1. Recuperation du code
-        [cite_start]uses: actions/checkout@v4 [cite: 1217]
+        uses: actions/checkout@v4
 
       - name: Configuration de Node.js
         uses: actions/setup-node@v4
@@ -18,7 +19,7 @@ jobs:
           node-version: 18
 
       - name: 2. Installation des dependances (Root)
-        [cite_start]run: npm install [cite: 1218]
+        run: npm install
 
       - name: Installation des dependances (Frontend)
         run: |
@@ -26,16 +27,16 @@ jobs:
           npm install
 
       - name: 3. Execution des Tests
-        [cite_start]run: echo "===== Execution des tests automatiques =====" [cite: 1219]
+        run: echo "===== Execution des tests automatiques ====="
 
       - name: 4. Build de l'image Docker Backend
-        [cite_start]run: docker build -t proshop-backend:latest -f backend/Dockerfile . [cite: 1220]
+        run: docker build -t proshop-backend:latest -f backend/Dockerfile .
 
       - name: Build de l'image Docker Frontend
-        [cite_start]run: docker build -t proshop-frontend:latest frontend/ [cite: 1220]
+        run: docker build -t proshop-frontend:latest frontend/
 
       - name: 5. Analyse de securite (DevSecOps)
-        [cite_start]uses: aquasecurity/trivy-action@master [cite: 1221]
+        uses: aquasecurity/trivy-action@master
         with:
           image-ref: 'proshop-backend:latest'
           format: 'table'
@@ -43,5 +44,5 @@ jobs:
 
       - name: 6. Simulation du Deploiement
         run: |
-          echo "===== Pipeline valide avec succes ! =====" [cite: 1222]
-          echo "Pret pour le deploiement avec Docker Compose" [cite: 1222]
+          echo "===== Pipeline valide avec succes ! ====="
+          echo "Pret pour le deploiement avec Docker Compose"
