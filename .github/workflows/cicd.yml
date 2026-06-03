@@ -50,7 +50,6 @@ jobs:
       - name: 7. Connexion a Docker Hub
         uses: docker/login-action@v3
         with:
-          # On utilise des variables secrete GitHub Actions pour ne pas exposer tes identifiants
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
